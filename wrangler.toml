@@ -5,6 +5,6 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "plan-manager-db"
-# 在 Cloudflare 建立 D1 資料庫後，把這裡換成實際的 database_id
-database_id = "00000000-0000-0000-0000-000000000000"
+
+database_id = "4df336fd-4694-494a-91c6-a6126167a84d"
 migrations_dir = "migrations"
