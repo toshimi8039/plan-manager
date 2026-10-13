@@ -1,4 +1,4 @@
--- 使用者：密碼只存 PBKDF2 雜湊與鹽，不存明碼
+/* 使用者：密碼只存 PBKDF2 雜湊與鹽，不存明碼 */
 CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT NOT NULL UNIQUE COLLATE NOCASE,
@@ -15,7 +15,7 @@ CREATE TABLE users (
   updated_at INTEGER NOT NULL
 );
 
--- 登入狀態：只存 token 的 SHA-256，資料庫外洩也無法直接冒用
+/* 登入狀態：只存 token 的 SHA-256，資料庫外洩也無法直接冒用 */
 CREATE TABLE sessions (
   token_hash TEXT PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
