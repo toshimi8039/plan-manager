@@ -1,32 +1,37 @@
 :root {
-  --bg: #f5f7fb;
-  --surface: #ffffff;
-  --surface-2: #eef1f6;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --border: #dde2ea;
-  --primary: #2563eb;
-  --primary-text: #ffffff;
-  --danger: #dc2626;
-  --success: #16a34a;
-  --warning: #d97706;
-  --radius: 10px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 2px 8px rgba(0, 0, 0, .05);
+  /* 文青風「紙本手帳」：米白紙、墨色、赭紅與苔綠 */
+  --bg: #f3ede2;
+  --surface: #fbf8f2;
+  --surface-2: #ece4d6;
+  --text: #3b342d;
+  --muted: #8a7f72;
+  --border: #d9cdb9;
+  --primary: #a4593a;
+  --primary-text: #fbf8f2;
+  --ink: #3b342d;
+  --danger: #a23b2c;
+  --success: #6f8a5c;
+  --warning: #b9852f;
+  --radius: 3px;
+  --shadow: none;
+  --serif: "Noto Serif TC", "Songti TC", "STSong", "PMingLiU", "MingLiU", serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
+  /* 深色時改成「夜讀」：深褐紙、米色字 */
   :root {
-    --bg: #0f141b;
-    --surface: #171d26;
-    --surface-2: #1f2732;
-    --text: #e5e7eb;
-    --muted: #9aa3af;
-    --border: #2b3441;
-    --primary: #3b82f6;
-    --danger: #f87171;
-    --success: #4ade80;
-    --warning: #fbbf24;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    --bg: #1d1915;
+    --surface: #26211c;
+    --surface-2: #322b24;
+    --text: #ebe2d3;
+    --muted: #a3978a;
+    --border: #463d33;
+    --primary: #d08a63;
+    --primary-text: #1d1915;
+    --ink: #ebe2d3;
+    --danger: #e07a68;
+    --success: #9db487;
+    --warning: #d9a85a;
     color-scheme: dark;
   }
 }
@@ -36,7 +41,8 @@ html, body { margin: 0; }
 body {
   background: var(--bg);
   color: var(--text);
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  font: 15px/1.6 var(--serif);
+  letter-spacing: .02em;
   -webkit-text-size-adjust: 100%;
 }
 [hidden] { display: none !important; }
@@ -243,3 +249,77 @@ input[type=range] { padding: 0; border: 0; accent-color: var(--primary); }
   .brand small { display: none; }
   .brand img { width: 28px; height: 28px; }
 }
+
+/* ---------- 文青風細節 ---------- */
+html { background: var(--bg); }
+body {
+  min-height: 100vh;
+  background-image: radial-gradient(rgba(120, 100, 70, .07) 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+button, input, select, textarea { font-family: inherit; letter-spacing: inherit; }
+a { color: var(--primary); }
+
+.topbar { background: var(--bg); border-bottom: 1px solid var(--ink); }
+.brand span { font-weight: 700; letter-spacing: .15em; }
+.brand small { font-style: italic; letter-spacing: .1em; }
+.brand img, .auth-logo img { filter: sepia(.55) saturate(.7) hue-rotate(-10deg); }
+.auth-logo img { box-shadow: none; }
+.nav a { color: var(--muted); }
+.nav a.active { color: var(--text); font-weight: 600; border-bottom: 1px solid var(--ink); }
+
+h1 { font-weight: 700; letter-spacing: .12em; font-size: 1.55rem; }
+.toolbar h1::after, .auth h1::after {
+  content: ''; display: block; width: 2.2em; height: 2px; background: var(--primary); margin-top: .35rem;
+}
+.auth h1::after { margin: .35rem auto 0; }
+h2 { letter-spacing: .08em; }
+.section-title { letter-spacing: .1em; font-weight: 600; border-bottom: 1px dashed var(--border); padding-bottom: .35rem; }
+
+.card, .list, .column, dialog { box-shadow: none; border-radius: 2px; }
+.card { border: 1px solid var(--border); background: var(--surface); }
+.stat .label, .summary-item .label { letter-spacing: .1em; }
+.stat .value { font-weight: 600; }
+
+button, .btn { border-radius: 2px; }
+button.primary { background: var(--ink); border-color: var(--ink); color: var(--bg); letter-spacing: .1em; }
+button:hover { border-color: var(--ink); }
+button.danger { color: var(--danger); }
+input, select, textarea { border-radius: 2px; background: var(--surface); }
+input:focus, select:focus, textarea:focus { outline: 1px solid var(--ink); }
+.segmented { border-radius: 2px; border-color: var(--ink); }
+.segmented button.on { background: var(--ink); color: var(--bg); }
+
+.progress { height: 4px; border-radius: 0; background: var(--surface-2); }
+.progress.thin { height: 3px; }
+.progress > span { background: var(--success); }
+.progress.budget.ok > span { background: var(--ink); }
+.progress .expected { background: var(--danger); opacity: .8; }
+
+.pill { border-radius: 2px; font-weight: 400; border: 1px solid currentColor; background: transparent !important; }
+.badge { border-radius: 2px; background: var(--surface-2); }
+.badge.high { background: transparent; color: var(--danger); border: 1px solid currentColor; }
+.badge.medium { background: transparent; color: var(--warning); border: 1px solid currentColor; }
+.badge.low { background: transparent; color: var(--success); border: 1px solid currentColor; }
+
+th { font-weight: 400; letter-spacing: .1em; }
+.dash-table td:first-child a { color: var(--text); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 4px; }
+.value.bad, .overdue { color: var(--danger) !important; }
+
+.tabs { border-bottom-color: var(--ink); }
+.tabs a { letter-spacing: .1em; }
+.tabs a.on { color: var(--text); border-bottom-color: var(--primary); }
+
+.column { background: transparent; border: 1px dashed var(--border); }
+.column-head { letter-spacing: .1em; border-bottom: 1px solid var(--border); margin-bottom: .5rem; }
+.task-card { border-radius: 2px; box-shadow: none; background: var(--surface); }
+.task-card:hover { border-color: var(--ink); }
+.add-task { border-color: var(--border); }
+.list { border: 1px solid var(--border); background: var(--surface); }
+a.link-row:hover, .list-row:hover { background: var(--surface-2); }
+
+dialog { border: 1px solid var(--ink); background: var(--surface); }
+dialog::backdrop { background: rgba(40, 30, 20, .35); }
+.notice { border-left: 3px solid var(--primary); border-radius: 0; background: var(--surface-2); }
+.secret { border-radius: 2px; }
+.toast { background: var(--ink); color: var(--bg); border-radius: 2px; letter-spacing: .05em; }
