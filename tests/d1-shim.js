@@ -1,6 +1,5 @@
 // 用 node:sqlite 模擬 Cloudflare D1 的 API，讓測試不需要 wrangler
 import { DatabaseSync } from 'node:sqlite';
-import { readFileSync, readdirSync } from 'node:fs';
 
 class Stmt {
   constructor(db, sql, params = []) { this.db = db; this.sql = sql; this.params = params; }
@@ -16,11 +15,21 @@ class Stmt {
 export function createD1() {
   const db = new DatabaseSync(':memory:');
   db.exec('PRAGMA foreign_keys = ON');
-  const dir = new URL('../migrations/', import.meta.url);
-  for (const f of readdirSync(dir).sort()) db.exec(readFileSync(new URL(f, dir), 'utf8'));
   return {
     prepare: (sql) => new Stmt(db, sql),
-    batch: async (stmts) => Promise.all(stmts.map((s) => s.run())),
+    batch: async (stmts) => {
+      // 和 D1 一樣整批在同一個交易中執行
+      db.exec('BEGIN');
+      try {
+        const out = [];
+        for (const s of stmts) out.push(await s.run());
+        db.exec('COMMIT');
+        return out;
+      } catch (err) {
+        db.exec('ROLLBACK');
+        throw err;
+      }
+    },
     raw: db,
   };
 }

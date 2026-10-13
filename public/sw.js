@@ -1,5 +1,5 @@
 // Service Worker：快取畫面檔案讓 App 開啟更快；API 一律走網路，不快取資料
-const CACHE = 'plan-manager-v1';
+const CACHE = 'plan-manager-v2';
 const SHELL = ['/', '/index.html', '/style.css', '/app.js', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {

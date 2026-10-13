@@ -10,6 +10,14 @@
 - 看板檢視（電腦可拖拉，手機用 ← → 移動）與清單檢視（勾選完成）
 - 管理員：新增使用者（產生臨時密碼）、重設密碼、停用、調整角色
 
+## 功能（第二版）
+
+- 總覽儀表板：所有進行中計劃的進度、時程狀態、預算使用，以及逾期／7 天內到期的任務與近期里程碑
+- 進度：任務可設定進度 %（0–100）與權重，計劃進度＝加權平均；依開始日～結束日算出「今天應達幾 %」，顯示超前或落後
+- 預算：總預算、預算科目（預計金額）、支出紀錄（可關聯任務），使用率超過 80% 黃色、超支紅色
+  - 所有人都能看預算，只有管理員或計劃建立者可以修改
+- 里程碑：重要日期節點，逾期未完成會標紅
+
 ## 初始管理員
 
 | 帳號 | 初始密碼 |
@@ -31,23 +39,23 @@
 
 1. 註冊／登入 [Cloudflare](https://dash.cloudflare.com/)。
 2. 左側選 **Storage & Databases → D1**，建立資料庫，名稱填 `plan-manager-db`。
-3. 進入這個資料庫的 **Console**，把 [`migrations/0001_init.sql`](migrations/0001_init.sql) 的內容整段貼上執行。
-4. 複製資料庫的 **Database ID**，貼到 [`wrangler.toml`](wrangler.toml) 的 `database_id`，commit 到 GitHub。
-5. 左側選 **Workers & Pages → Create → Pages → Connect to Git**，選這個 repo：
+3. 複製資料庫的 **Database ID**，貼到 [`wrangler.toml`](wrangler.toml) 的 `database_id`，commit 到 GitHub。
+4. 左側選 **Workers & Pages → Create application → Continue to Pages → Connect GitHub**，選這個 repo：
    - Framework preset：`None`
    - Build command：留空
    - Build output directory：`public`
-6. 部署完成會得到 `https://plan-manager-xxx.pages.dev` 的網址，用初始帳號登入並改密碼。
+5. 部署完成會得到 `https://plan-manager-xxx.pages.dev` 的網址，用初始帳號登入並改密碼。
 
 之後每次 push 到 `main`，Cloudflare 會自動重新部署。
+
+資料表不需要手動建立：程式第一次收到請求時會自動建立或升級（見 [`lib/schema.js`](lib/schema.js)）。
 
 ## 本機開發
 
 ```bash
 npm install
-npm run db:migrate:local   # 建立本機資料庫
-npm run dev                # http://localhost:8788
-npm test                   # API 測試
+npm run dev    # http://localhost:8788（本機資料庫會自動建立）
+npm test       # API 測試
 ```
 
 ## 專案結構
@@ -55,7 +63,6 @@ npm test                   # API 測試
 ```
 public/            前端（HTML / CSS / JS、PWA 設定、圖示）
 functions/api/     Cloudflare Pages Functions 入口
-lib/               API 與密碼雜湊邏輯
-migrations/        D1 資料表定義
+lib/               API、密碼雜湊、資料庫結構與自動升級
 tests/             API 測試（用 node:sqlite 模擬 D1）
 ```

@@ -5,6 +5,4 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "plan-manager-db"
-
 database_id = "4df336fd-4694-494a-91c6-a6126167a84d"
-migrations_dir = "migrations"
