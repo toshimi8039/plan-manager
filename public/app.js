@@ -1009,6 +1009,8 @@ async function render() {
     return viewLogin();
   }
   if (me.must_change_password && hash !== '#/password') return go('#/password');
+  // 修改密碼頁只在第一次登入（或密碼被重設）時出現
+  if (!me.must_change_password && hash === '#/password') return go('#/dashboard');
 
   topbar.hidden = false;
   document.getElementById('nav-users').hidden = me.role !== 'admin';
