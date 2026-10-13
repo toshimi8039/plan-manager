@@ -1,6 +1,6 @@
 {
-  "name": "計劃管理",
-  "short_name": "計劃管理",
+  "name": "計劃通 PlanPro",
+  "short_name": "計劃通",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -24,5 +24,6 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "description": "計劃、任務、預算與進度管理"
 }

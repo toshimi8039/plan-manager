@@ -1,4 +1,4 @@
-# 計劃管理 App
+# 計劃通 PlanPro
 
 可以在電腦和手機使用的計劃管理網頁 App，部署在 Cloudflare 的免費方案（Pages + Pages Functions + D1 資料庫）。手機可以「加到主畫面」當成 App 使用（PWA）。
 

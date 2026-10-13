@@ -1,4 +1,4 @@
-// 計劃管理前端：單頁 App，以網址 hash 切換畫面
+// 計劃通前端：單頁 App，以網址 hash 切換畫面
 const app = document.getElementById('app');
 const dialog = document.getElementById('dialog');
 const topbar = document.getElementById('topbar');
@@ -193,7 +193,9 @@ function userName(u) {
 function viewLogin() {
   topbar.hidden = true;
   app.innerHTML = `<form class="card auth" id="login-form" autocomplete="on">
-    <h1>計劃管理</h1>
+    <div class="auth-logo"><img src="/icons/icon.svg" alt="" width="72" height="72"></div>
+    <h1>計劃通</h1>
+    <p class="auth-sub">PlanPro · 計劃、任務、預算一次掌握</p>
     <div class="field"><label for="username">帳號</label>
       <input id="username" name="username" autocomplete="username" autocapitalize="none" required></div>
     <div class="field"><label for="password">密碼</label>
