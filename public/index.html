@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="計劃管理">
+  <title>計劃管理</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header id="topbar" class="topbar" hidden>
+    <a href="#/projects" class="brand">計劃管理</a>
+    <nav class="nav">
+      <a href="#/projects" data-nav="projects">計劃</a>
+      <a href="#/users" data-nav="users" id="nav-users" hidden>使用者</a>
+      <a href="#/password" data-nav="password">改密碼</a>
+      <button type="button" id="logout" class="link">登出</button>
+    </nav>
+  </header>
+  <main id="app" class="app"><p class="muted center">載入中…</p></main>
+  <dialog id="dialog"></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
