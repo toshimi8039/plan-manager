@@ -93,12 +93,14 @@ test('管理員建立使用者、臨時密碼需改、一般成員不能管理�
   await loginAndChange(c);
   const u = await c.call('POST', '/users', { username: 'alice' });
   assert.equal(u.status, 201);
+  assert.equal(u.body.default_password, true);
+  assert.equal(u.body.temp_password, undefined);
   assert.equal((await c.call('POST', '/users', { username: 'alice' })).status, 409);
 
   c.clearCookie();
-  const login = await c.call('POST', '/auth/login', { username: 'alice', password: u.body.temp_password });
+  const login = await c.call('POST', '/auth/login', { username: 'alice', password: '123456' });
   assert.equal(login.body.user.must_change_password, true);
-  await c.call('POST', '/auth/change-password', { current_password: u.body.temp_password, new_password: 'Alice2026' });
+  await c.call('POST', '/auth/change-password', { current_password: '123456', new_password: 'Alice2026' });
   assert.equal((await c.call('POST', '/users', { username: 'bob' })).status, 403);
   const list = await c.call('GET', '/users');
   assert.deepEqual(Object.keys(list.body.users[0]).sort(), ['display_name', 'id', 'username']);
@@ -186,10 +188,10 @@ test('預算、科目、支出與權限', async () => {
   assert.equal(b.spent, 30000);
 
   // 一般成員可以看預算，但不能改
-  const u = (await c.call('POST', '/users', { username: 'member1' })).body;
+  await c.call('POST', '/users', { username: 'member1', password: 'start1' });
   c.clearCookie();
-  await c.call('POST', '/auth/login', { username: 'member1', password: u.temp_password });
-  await c.call('POST', '/auth/change-password', { current_password: u.temp_password, new_password: 'Member123' });
+  assert.equal((await c.call('POST', '/auth/login', { username: 'member1', password: 'start1' })).body.user.must_change_password, true);
+  await c.call('POST', '/auth/change-password', { current_password: 'start1', new_password: 'Member123' });
   b = (await c.call('GET', `/projects/${pid}/budget`)).body;
   assert.equal(b.can_edit, false);
   assert.equal((await c.call('PATCH', `/projects/${pid}`, { budget: 1 })).status, 403);
@@ -226,4 +228,19 @@ test('里程碑與總覽', async () => {
   assert.equal(d.projects.length, 1);
 
   assert.equal((await c.call('DELETE', `/projects/${pid}`)).status, 200);
+});
+
+test('新增使用者可自訂密碼或留白用 123456；重設密碼同樣規則', async () => {
+  const c = client();
+  await loginAndChange(c);
+  assert.equal((await c.call('POST', '/users', { username: 'bob', password: '123' })).status, 400);
+  const bob = await c.call('POST', '/users', { username: 'bob', password: 'bobpass1' });
+  assert.equal(bob.body.default_password, false);
+  const reset = await c.call('POST', `/users/${bob.body.user.id}/reset-password`, {});
+  assert.equal(reset.body.default_password, true);
+  await c.call('POST', `/users/${bob.body.user.id}/reset-password`, { password: 'again123' });
+  c.clearCookie();
+  assert.equal((await c.call('POST', '/auth/login', { username: 'bob', password: '123456' })).status, 401);
+  const login = await c.call('POST', '/auth/login', { username: 'bob', password: 'again123' });
+  assert.equal(login.body.user.must_change_password, true);
 });

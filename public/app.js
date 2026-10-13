@@ -925,10 +925,7 @@ async function viewUsers() {
     const u = users.find((x) => x.id === Number(btn.closest('tr').dataset.id));
     try {
       if (btn.dataset.act === 'reset') {
-        if (!(await confirmDialog(`要重設 ${u.username} 的密碼嗎？對方需要用臨時密碼重新登入。`))) return;
-        const res = await api(`/users/${u.id}/reset-password`, { method: 'POST', body: {} });
-        showTempPassword(u.username, res.temp_password);
-        if (u.id === me.id) { me = null; }
+        resetPasswordDialog(u);
       } else if (btn.dataset.act === 'role') {
         await api(`/users/${u.id}`, { method: 'PATCH', body: { role: u.role === 'admin' ? 'member' : 'admin' } });
         viewUsers();
@@ -948,24 +945,44 @@ function newUserDialog() {
       <div class="muted small">英文、數字、底線、點或減號，3 到 32 個字</div></div>
     <div class="field"><label>顯示名稱（選填）</label><input name="display_name" maxlength="50"></div>
     <div class="field"><label>角色</label><select name="role"><option value="member">成員</option><option value="admin">管理員</option></select></div>
+    ${passwordField()}
     <p class="error"></p>
     <div class="actions"><button type="button" data-close>取消</button><button type="submit" class="primary">建立</button></div>
   </form>`);
   const form = dialog.querySelector('form');
   bindForm(form, async (data) => {
-    const res = await api('/users', { method: 'POST', body: data });
+    await api('/users', { method: 'POST', body: data });
     usersCache = null;
-    showTempPassword(res.user.username, res.temp_password);
+    dialog.close();
+    toast(`已建立 ${data.username}，初始密碼${data.password ? '為你設定的密碼' : '為 123456'}`);
+    render();
   });
   form.username.focus();
 }
 
-function showTempPassword(username, password) {
-  openDialog(`<h2>臨時密碼</h2>
-    <p>請把這組臨時密碼交給 <b>${esc(username)}</b>。對方登入後會被要求立刻改密碼。這組密碼只會顯示這一次。</p>
-    <div class="secret">${esc(password)}</div>
-    <div class="actions"><button type="button" class="primary" data-close>我記下了</button></div>`);
-  dialog.addEventListener('close', () => (me ? render() : go('#/login')), { once: true });
+function passwordField() {
+  return `<div class="field"><label>初始密碼（選填）</label>
+      <input name="password" type="text" autocomplete="off" autocapitalize="none" minlength="6" maxlength="128" placeholder="留白則為 123456">
+      <div class="muted small">對方第一次登入後會被要求改成自己的密碼</div></div>`;
+}
+
+function resetPasswordDialog(u) {
+  const self = u.id === me.id;
+  openDialog(`<form method="dialog">
+    <h2>重設 ${esc(u.username)} 的密碼</h2>
+    ${passwordField()}
+    ${self ? '<p class="notice">你正在重設自己的密碼，完成後需要重新登入。</p>' : '<p class="muted small">重設後對方會被登出，需要用新密碼重新登入。</p>'}
+    <p class="error"></p>
+    <div class="actions"><button type="button" data-close>取消</button><button type="submit" class="primary">重設密碼</button></div>
+  </form>`);
+  const form = dialog.querySelector('form');
+  bindForm(form, async (data) => {
+    await api(`/users/${u.id}/reset-password`, { method: 'POST', body: data });
+    dialog.close();
+    toast(`已重設 ${u.username} 的密碼${data.password ? '' : '為 123456'}`);
+    if (self) { me = null; go('#/login'); } else render();
+  });
+  form.password.focus();
 }
 
 // ---------- 路由 ----------
